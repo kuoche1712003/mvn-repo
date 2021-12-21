@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>io.kuoche</groupId>
+    <artifactId>auth</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.6.1</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <properties>
+        <github.global.server>github</github.global.server>
+    </properties>
+
+    <modules>
+        <module>auth-core</module>
+        <module>auth-config</module>
+        <module>auth-spring-boot-starter</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.2</version>
+                <configuration>
+                    <!-- altDeploymentRepository ：指定替代方案應該部署專案工件的儲存庫（除了指定的工件）。 -->
+                    <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo
+                    </altDeploymentRepository>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.12</version>
+                <configuration>
+                    <message>Creating site for ${project.artifactId} ${project.version}</message>
+                    <noJekyll>true</noJekyll>
+                    <!--本地jar地址, 對應上面的altDeploymentRepository-->
+                    <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
+                    <!--分支-->
+                    <branch>refs/heads/main</branch>
+                    <merge>true</merge>
+
+                    <includes>
+                        <include>**/*</include>
+                    </includes>
+                    <!--對應github上建立的倉庫名稱 name-->
+                    <repositoryName>mvn-repo</repositoryName>
+                    <!--github登入賬號 對應的密碼存在maven的setting.xml檔案中-->
+                    <!--由github組織擁有，則該值將是組織名稱，如果由使用者擁有，則該值將是使用者名稱-->
+                    <repositoryOwner>kuoche1712003</repositoryOwner>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>deploy</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
